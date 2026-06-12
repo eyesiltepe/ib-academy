@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RX Academy — Restructuring &amp; Special Situations Self-Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F0EB;
+    --ink:#1B1F26;
+    --oxblood:#6E1423;
+    --oxblood-deep:#4A0D18;
+    --brass:#9C7C38;
+    --recovery:#2E6E4E;
+    --line:#C9C4B8;
+    --card:#FBFAF7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Spectral',Georgia,serif;
+    font-size:17px;
+    line-height:1.6;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;gap:16px;
+    padding:10px 20px;
+    border-bottom:3px solid var(--brass);
+  }
+  .topbar .ticker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;white-space:nowrap}
+  .topbar .barwrap{flex:1;height:10px;background:#3A4150;border:1px solid #555;position:relative}
+  .topbar .barfill{height:100%;width:0%;background:linear-gradient(90deg,var(--oxblood),var(--brass));transition:width .4s ease}
+  .topbar .pct{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;min-width:150px;text-align:right}
+  @media(max-width:640px){.topbar .ticker{display:none}.topbar .pct{min-width:120px;font-size:11px}}
+
+  /* ---------- hero ---------- */
+  header.hero{
+    max-width:980px;margin:0 auto;padding:64px 24px 36px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--oxblood);margin-bottom:14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:900;
+    font-size:clamp(36px,7vw,68px);line-height:1.02;letter-spacing:-.01em;
+  }
+  h1 .amp{color:var(--oxblood);font-style:italic;font-weight:500}
+  .hero p.sub{margin-top:18px;max-width:640px;font-size:18px;color:#3d4350}
+  .hero .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;
+    border:1px solid var(--ink);padding:4px 10px;background:var(--card);
+  }
+  .resetline{margin-top:14px;font-size:13px;color:#6a7080}
+  .resetline button{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;background:none;
+    border:1px solid var(--line);padding:3px 8px;cursor:pointer;color:#6a7080;
+  }
+  .resetline button:hover{border-color:var(--oxblood);color:var(--oxblood)}
+  .playbtn{
+    display:inline-block;margin-top:22px;background:var(--ink);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+    padding:14px 24px;text-decoration:none;border:1px solid var(--ink);
+  }
+  .playbtn:hover{background:var(--oxblood);border-color:var(--oxblood)}
+  .playbtn .sub{display:block;font-size:10px;letter-spacing:.1em;color:var(--brass);margin-top:4px;text-transform:none}
+
+  /* ---------- waterfall nav (signature) ---------- */
+  .waterfall{max-width:980px;margin:8px auto 56px;padding:0 24px}
+  .waterfall h2{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:#6a7080;margin-bottom:12px;
+  }
+  .tranche{
+    display:flex;align-items:center;gap:0;cursor:pointer;
+    border:1px solid var(--ink);margin-bottom:-1px;background:var(--card);
+    transition:transform .12s ease;
+  }
+  .tranche:hover{transform:translateX(6px)}
+  .tranche .seniority{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--paper);background:var(--ink);
+    writing-mode:horizontal-tb;padding:10px 8px;min-width:118px;text-align:center;align-self:stretch;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .tranche .tname{flex:1;padding:12px 16px;font-family:'Fraunces',serif;font-weight:700;font-size:17px}
+  .tranche .trec{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:0 16px;color:#6a7080;min-width:90px;text-align:right}
+  .tranche.t0 .seniority{background:var(--ink)}
+  .tranche.t1 .seniority{background:#2E3A4D}
+  .tranche.t2 .seniority{background:#4A0D18}
+  .tranche.t3 .seniority{background:var(--oxblood)}
+  .tranche.t4 .seniority{background:#8a4a1f}
+  .tranche.t5 .seniority{background:var(--brass)}
+  /* width steps like a waterfall */
+  .tranche.t0{width:100%}
+  .tranche.t1{width:96%}
+  .tranche.t2{width:92%}
+  .tranche.t3{width:88%}
+  .tranche.t4{width:84%}
+  .tranche.t5{width:80%}
+  @media(max-width:640px){
+    .tranche{width:100%!important}
+    .tranche .seniority{min-width:84px;font-size:9px}
+    .tranche .trec{display:none}
+  }
+
+  /* ---------- sections ---------- */
+  main{max-width:980px;margin:0 auto;padding:0 24px 80px}
+  section.module{margin-bottom:64px;scroll-margin-top:70px}
+  .modhead{border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:6px;
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .modhead h2{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(24px,4vw,34px);line-height:1.1}
+  .modhead .modlabel{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--oxblood)}
+  .modhead .modprog{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#6a7080}
+  .modintro{margin:14px 0 22px;color:#3d4350;max-width:700px}
+
+  /* lesson card */
+  .lesson{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink);
+    margin-bottom:14px;
+  }
+  .lesson.done{border-left-color:var(--recovery);opacity:.82}
+  .lesson .lhead{
+    display:flex;align-items:flex-start;gap:14px;padding:16px 18px;cursor:pointer;
+  }
+  .lesson .lhead:hover{background:#f4f1ea00}
+  .lcheck{
+    appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;margin-top:3px;
+    border:2px solid var(--ink);background:#fff;cursor:pointer;position:relative;
+  }
+  .lcheck:checked{background:var(--recovery);border-color:var(--recovery)}
+  .lcheck:checked::after{
+    content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:14px;font-weight:700;font-family:'IBM Plex Mono',monospace;
+  }
+  .lcheck:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+  .ltitlewrap{flex:1}
+  .lcode{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--oxblood)}
+  .ltitle{font-family:'Fraunces',serif;font-weight:700;font-size:19px;line-height:1.25}
+  .lesson.done .ltitle{text-decoration:line-through;text-decoration-thickness:1.5px;text-decoration-color:var(--recovery)}
+  .ltoggle{flex:none;font-family:'IBM Plex Mono',monospace;font-size:18px;color:#6a7080;margin-top:2px;user-select:none}
+  .lbody{display:none;padding:0 18px 18px 54px;border-top:1px dashed var(--line)}
+  .lesson.open .lbody{display:block}
+  .lbody h4{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--brass);margin:16px 0 4px;
+  }
+  .lbody p, .lbody li{font-size:15.5px;color:#2b303b}
+  .lbody ul{padding-left:18px}
+  .lbody .mastery{background:#F0EAE0;border-left:3px solid var(--brass);padding:10px 14px;margin-top:6px;font-size:15px}
+  @media(max-width:640px){.lbody{padding-left:18px}}
+
+  /* ---------- resources ---------- */
+  .resgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px}
+  .rescard{background:var(--card);border:1px solid var(--line);padding:18px}
+  .rescard h3{font-family:'Fraunces',serif;font-weight:700;font-size:19px;border-bottom:2px solid var(--oxblood);padding-bottom:6px;margin-bottom:10px}
+  .rescard ul{list-style:none}
+  .rescard li{padding:6px 0;border-bottom:1px dotted var(--line);font-size:15px}
+  .rescard li:last-child{border-bottom:none}
+  .rescard a{color:var(--oxblood);text-decoration:none;border-bottom:1px solid transparent}
+  .rescard a:hover{border-bottom-color:var(--oxblood)}
+  .rescard .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);padding:1px 6px;margin-right:6px}
+  .rescard .tag.free{background:var(--recovery)}
+  .rescard .tag.owned{background:var(--brass)}
+  .rescard .tag.paid{background:var(--oxblood)}
+  .rescard p.note{font-size:13.5px;color:#6a7080;margin-top:4px}
+
+  /* ---------- schedule ---------- */
+  table.sched{width:100%;border-collapse:collapse;margin-top:18px;background:var(--card)}
+  table.sched th,table.sched td{border:1px solid var(--line);padding:10px 14px;text-align:left;font-size:15px}
+  table.sched th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:var(--ink);color:var(--paper)}
+  table.sched td:first-child{font-family:'IBM Plex Mono',monospace;font-weight:600;width:90px}
+
+  footer{
+    background:var(--ink);color:#aab2c0;margin-top:40px;
+    padding:36px 24px;text-align:center;font-size:14px;
+  }
+  footer .mono{color:var(--brass)}
+  .secthead{border-bottom:3px solid var(--ink);padding-bottom:10px;margin:64px 0 6px}
+  .secthead h2{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(24px,4vw,34px)}
+  .secthead .modlabel{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--oxblood)}
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none!important;animation:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="ticker">RX-ACADEMY / SELF-STUDY TLB DUE 2026</span>
+  <div class="barwrap"><div class="barfill" id="barfill"></div></div>
+  <span class="pct" id="pcttext">0 / 26 · 0.0¢ recovery</span>
+</div>
+
+<header class="hero">
+  <div class="eyebrow">A Self-Study Program · 6 Modules · 26 Lessons · 8 Weeks</div>
+  <h1>Restructuring <span class="amp">&amp;</span> Special Situations</h1>
+  <p class="sub">Credit fundamentals, documentation, liability management, and the case law of lender-on-lender violence — built on Altman &amp; Hotchkiss, Nesbitt, Pignataro, public court dockets, and free primary sources. Your progress is tracked as a recovery rate: complete all 26 lessons to recover at par.</p>
+  <div class="meta">
+    <span class="chip">13-WEEK CF MODEL</span>
+    <span class="chip">COVENANT ANALYSIS</span>
+    <span class="chip">LME: UPTIER / DROP-DOWN / DOUBLE-DIP</span>
+    <span class="chip">6 REAL CASE STUDIES</span>
+  </div>
+  <div class="resetline">Progress saves automatically in this browser. <button id="resetbtn">Reset progress</button></div>
+  <a class="playbtn" href="./game/">▶ Play THE DESK<span class="sub">restructuring analyst program — 13 staffings, 5 verified Excel builds, FactSet + Capital IQ screens</span></a>
+  <a class="playbtn" href="./ib/" style="margin-left:10px;background:#1E4D3B;border-color:#1E4D3B">📖 IB Academy<span class="sub">the complete investment banking guide — 10 modules, 42 lessons, full content inline</span></a>
+</header>
+
+<nav class="waterfall" aria-label="Module navigation">
+  <h2>The Priority Waterfall — click a tranche to jump in</h2>
+  <div id="waterfall"></div>
+</nav>
+
+<main id="modules"></main>
+
+<div style="max-width:980px;margin:0 auto;padding:0 24px">
+  <div class="secthead"><div class="modlabel">Appendix A</div><h2>Resource Library</h2></div>
+  <p style="margin-top:12px;color:#3d4350;max-width:700px">Everything below is either free, already in your library, or clearly marked as paid. Start with the free WSP series and the Pari Passu newsletter archive — together they cover ~70% of this curriculum in video and plain English.</p>
+
+  <div class="resgrid">
+    <div class="rescard">
+      <h3>Video &amp; Free Courses</h3>
+      <ul>
+        <li><span class="tag free">Free</span><a href="https://www.wallstreetprep.com/knowledge/quick-lesson-demystifying-financial-restructuring/" target="_blank" rel="noopener">Wall Street Prep — Financial Restructuring, 11-part video series</a><p class="note">The single best free starting point. Watch alongside Module 1.</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.youtube.com/@WallStreetPrep" target="_blank" rel="noopener">Wall Street Prep — YouTube channel</a><p class="note">Search the channel for "restructuring", "distressed", "13-week".</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.youtube.com/@AswathDamodaranonValuation" target="_blank" rel="noopener">Aswath Damodaran (NYU Stern)</a><p class="note">Valuation of distressed firms; full university courses, free.</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.youtube.com/@FinancialEdgeTraining" target="_blank" rel="noopener">Financial Edge Training</a><p class="note">Credit analysis, covenants, LBO/debt mechanics.</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.youtube.com/results?search_query=odd+lots+serta+simmons+uptier" target="_blank" rel="noopener">Bloomberg Odd Lots — LME / Serta episodes</a><p class="note">Podcast deep-dives on uptiers and creditor violence. Listen during Module 3.</p></li>
+        <li><span class="tag paid">Paid</span><a href="https://wallstreetprep.wharton.upenn.edu/restructuring-distressed-investing-certificate/" target="_blank" rel="noopener">Wharton × WSP — RX &amp; Distressed Investing Certificate</a><p class="note">The credentialed version of this exact curriculum, if you ever want the stamp.</p></li>
+      </ul>
+    </div>
+
+    <div class="rescard">
+      <h3>Books</h3>
+      <ul>
+        <li><span class="tag owned">Owned</span>Altman &amp; Hotchkiss — <em>Corporate Financial Distress, Restructuring &amp; Bankruptcy</em><p class="note">The backbone text for Modules 0–3.</p></li>
+        <li><span class="tag owned">Owned</span>Nesbitt — <em>Private Debt</em><p class="note">Who today's lenders are; covenant context.</p></li>
+        <li><span class="tag owned">Owned</span>Pignataro — <em>Financial Modeling &amp; Valuation</em> / <em>Leveraged Buyouts</em><p class="note">Modeling mechanics underneath everything.</p></li>
+        <li><span class="tag paid">Buy</span>Moyer — <em>Distressed Debt Analysis</em><p class="note">THE distressed investing book. Worth owning before recruiting.</p></li>
+        <li><span class="tag paid">Buy</span>Frumes &amp; Indap — <em>The Caesars Palace Coup</em><p class="note">Narrative read on the Caesars restructuring war. Reads like a thriller.</p></li>
+      </ul>
+    </div>
+
+    <div class="rescard">
+      <h3>Newsletters &amp; Legal Insight</h3>
+      <ul>
+        <li><span class="tag free">Free</span><a href="https://www.paripassu.io" target="_blank" rel="noopener">Pari Passu Newsletter</a><p class="note">Student-built RX newsletter; archive explains every LME structure in plain English. Read the whole archive.</p></li>
+        <li><span class="tag free">Free</span><a href="https://petition.substack.com" target="_blank" rel="noopener">PETITION</a><p class="note">Snarky, sharp weekly distressed commentary.</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.ropesgray.com" target="_blank" rel="noopener">Ropes &amp; Gray — Distressed Debt Legal Insights</a><p class="note">Law-firm view on live LME litigation (Wesco, TPI, ConvergeOne).</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.jdsupra.com/topics/debt-restructuring/" target="_blank" rel="noopener">JD Supra — Debt Restructuring feed</a><p class="note">Aggregated client memos from every major firm.</p></li>
+        <li><span class="tag paid">Paid</span>Octus (Reorg) / 9fin<p class="note">Professional-grade; some free articles and primers.</p></li>
+      </ul>
+    </div>
+
+    <div class="rescard">
+      <h3>Primary Sources &amp; Dockets</h3>
+      <ul>
+        <li><span class="tag free">Free</span><a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany" target="_blank" rel="noopener">SEC EDGAR</a><p class="note">Credit agreements, indentures, 8-Ks, cleansing materials.</p></li>
+        <li><span class="tag free">Free</span><a href="https://cases.ra.kroll.com" target="_blank" rel="noopener">Kroll Restructuring Administration</a><p class="note">Chapter 11 dockets — first-day declarations live here.</p></li>
+        <li><span class="tag free">Free</span><a href="https://dm.epiq11.com" target="_blank" rel="noopener">Epiq</a> · <a href="https://cases.stretto.com" target="_blank" rel="noopener">Stretto</a><p class="note">More claims-agent docket sites.</p></li>
+        <li><span class="tag free">Free</span><a href="https://www.restructuringinterviews.com/blog" target="_blank" rel="noopener">Restructuring Interviews — blog</a><p class="note">Free articles answering exactly the interview questions in Module 5.</p></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="secthead"><div class="modlabel">Appendix B</div><h2>8-Week Schedule</h2></div>
+  <table class="sched">
+    <tr><th>Week</th><th>Content</th><th>Build / Deliverable</th></tr>
+    <tr><td>W1</td><td>Module 0 + Lessons 1.1–1.3</td><td>Ecosystem map · recovery waterfall in Excel</td></tr>
+    <tr><td>W2</td><td>Lessons 1.4–1.6</td><td>13-week cash flow model · covenant tab</td></tr>
+    <tr><td>W3</td><td>Module 2 — documentation</td><td>"5 provisions that decide an LME" memo</td></tr>
+    <tr><td>W4</td><td>Lessons 3.1–3.5</td><td>Exchange-offer notes</td></tr>
+    <tr><td>W5</td><td>Lessons 3.6–3.9 — the LME core</td><td>LME playbook memo (2 pages)</td></tr>
+    <tr><td>W6</td><td>Cases 4.1–4.3 (J.Crew, Serta, Incora)</td><td>3 one-page case memos + 1 waterfall</td></tr>
+    <tr><td>W7</td><td>Cases 4.4–4.6 (Envision, Hertz, Party City/Rite Aid)</td><td>3 case memos + 2 waterfalls</td></tr>
+    <tr><td>W8</td><td>Case 4.7 capstone + Module 5</td><td>Mock RX pitch · resume bullets · flashcards</td></tr>
+  </table>
+</div>
+
+<footer>
+  <div class="mono">RX ACADEMY — SELF-STUDY EDITION</div>
+  <div style="margin-top:8px">Built June 2026 · Hosted on GitHub Pages · Progress stored locally in your browser</div>
+</footer>
+
+<script>
+// ---------------------------------------------------------------
+// CURRICULUM DATA — edit lessons here, the page renders itself
+// ---------------------------------------------------------------
+const CURRICULUM = [
+  {
+    id:"m0", seniority:"Super-Senior", title:"Module 0 — Course Introduction",
+    intro:"Why restructuring exists as an industry, who hires RX bankers, and how the business works.",
+    lessons:[
+      {code:"0.1", title:"Why Restructuring, and the Map of the Industry",
+       read:"A&H Ch. 1 (overview of corporate distress); skim the full table of contents. Search recent RX league tables (PJT, Houlihan Lokey, Evercore, Lazard).",
+       build:"One page: the RX ecosystem map — debtor-side vs. creditor-side mandates, the major shops, and how RX fees work (retainers + completion fees) vs. M&A fees.",
+       mastery:"What's the difference between debtor-side and creditor-side mandates? Why is RX countercyclical?"}
+    ]
+  },
+  {
+    id:"m1", seniority:"1st Lien", title:"Module 1 — RX & Special Situations Fundamentals",
+    intro:"Core concepts: the distress continuum, the cast of characters, distressed debt mechanics, capital & corporate structure, the 13-week cash flow, and covenants.",
+    lessons:[
+      {code:"1.1", title:"Corporate Restructuring: Overview & Core Concepts",
+       read:"A&H Ch. 1–2 — causes of distress, the distress continuum. Concepts: in-court vs. out-of-court, Ch. 11 vs. Ch. 7, balance-sheet vs. operational distress, liquidity vs. solvency crisis.",
+       build:"Flashcards for the 8 core distinctions above.",
+       mastery:"A company has positive EBITDA but can't make its maturity wall. Liquidity or solvency problem — and what's the menu of options?"},
+      {code:"1.2", title:"Key Parties: Credit Investors, Lawyers & Advisors",
+       read:"A&H on bankruptcy process participants; Nesbitt Ch. 1–3 on the private credit landscape. Know: par lenders vs. distressed funds, CLOs, direct lenders, ad hoc groups, UCC, DIP lenders, FAs (FTI, A&M, AlixPartners) vs. IBs, RX counsel (Kirkland, Weil, Davis Polk, Paul Weiss).",
+       build:"Half-page 'cast of characters' cheat sheet for a hypothetical Chapter 11.",
+       mastery:"Why do CLOs behave differently from distressed hedge funds in an amend-and-extend? (Ratings constraints, reinvestment periods.)"},
+      {code:"1.3", title:"Distressed Debt: Core Concepts",
+       read:"A&H Part III (distressed debt investing). Concepts: trading on price vs. yield, YTW, fulcrum security, recovery analysis, waterfall priority, loan-to-own, credit bids.",
+       build:"Excel waterfall: $500M EV, $300M 1L / $200M 2L / $100M unsecured. Recoveries at EV $350M / $450M / $550M; identify the fulcrum at each.",
+       mastery:"Define the fulcrum security and explain why distressed funds want to own it."},
+      {code:"1.4", title:"Capital Structure & Corporate Structure",
+       read:"Pignataro-LBO on debt tranches; A&H on priority and subordination. Concepts: structural vs. contractual subordination, upstream/downstream guarantees, HoldCo/OpCo, restricted vs. unrestricted subs, non-guarantor subs, 1L/2L intercreditor basics.",
+       build:"Draw a 3-tier org chart: HoldCo PIK → OpCo 1L TLB + senior notes → non-guarantor foreign sub with local debt. Annotate who has claims on what.",
+       mastery:"Why does debt at a non-guarantor sub effectively prime HoldCo creditors even if it's 'unsecured'?"},
+      {code:"1.5", title:"13-Week Cash Flow Forecasts & Analysis",
+       read:"A&H on cash management in distress; free A&M / FTI publications on TWCF. Concepts: direct-method forecasting, receipts/disbursements build, borrowing base, liquidity runway, variance reporting.",
+       build:"Build a 13-week cash flow model in Excel for a $12M-revenue trucking company: weekly AR collections with lag assumptions, payroll/fuel/rent/insurance/debt service, revolver draws, ending liquidity.",
+       mastery:"Why direct method instead of indirect? What's a borrowing base and how do AR ineligibles work?"},
+      {code:"1.6", title:"Financial Covenant Modeling",
+       read:"Nesbitt on covenant structures; Pignataro-FM for 3-statement mechanics. Concepts: maintenance vs. incurrence, leverage/coverage/FCCR, Adjusted EBITDA addbacks, headroom, springing covenants, cov-lite.",
+       build:"Add a covenant tab to a 3-statement model: Net Leverage ≤ 5.0x, FCCR ≥ 1.1x, quarterly headroom, then stress revenue −15% and show the breach quarter.",
+       mastery:"Why did cov-lite push restructurings later and make LMEs possible?"}
+    ]
+  },
+  {
+    id:"m2", seniority:"2nd Lien", title:"Module 2 — Credit Documentation",
+    intro:"One lesson, the heaviest in the course. The credit agreement is the battlefield; every LME in Module 3 lives or dies on these provisions.",
+    lessons:[
+      {code:"2.1", title:"Credit Documentation Deep Dive",
+       read:"Milbank / Davis Polk / Cleary client memos (free on their sites). Pull the actual J.Crew, Serta, and Envision credit agreements from EDGAR — skim defined terms and negative covenants. Concepts: debt/liens/RP/investments/asset-sale covenants, general & builder & ratio baskets, the unrestricted-sub trapdoor, pro rata sharing, 50.1% required lenders, sacred rights, intercreditor agreements.",
+       build:"One-page memo: 'The 5 credit agreement provisions that determine whether an LME is possible' — written as an MD briefing.",
+       mastery:"What are sacred rights, and why did Serta's 'open market purchase' language matter?"}
+    ]
+  },
+  {
+    id:"m3", seniority:"Senior Notes", title:"Module 3 — Liability Management: Strategic Alternatives",
+    intro:"The modern core. For every transaction type learn: mechanics → who wins/loses → the documentation hook that permits it → a real example.",
+    lessons:[
+      {code:"3.1", title:"The Restructuring Alternatives Framework",
+       read:"A&H on out-of-court vs. in-court tradeoffs. Order the toolkit by aggressiveness: refinance → A&E → repurchase → exchange → drop-down → uptier → double-dip → prepack → freefall Ch. 11.",
+       build:"Memorize the ladder; one paragraph on what pushes a company down each rung.",
+       mastery:"What determines in-court vs. out-of-court? (Holdouts, contract rejection, litigation, fraudulent transfer risk.)"},
+      {code:"3.2", title:"Refinancing Transactions",
+       read:"Concepts: maturity walls, refi at par vs. discount, market access, springing maturities.",
+       build:"—",
+       mastery:"What is a springing maturity and how does it create domino effects in a cap structure?"},
+      {code:"3.3", title:"Amend-and-Extend",
+       read:"Concepts: consent fees, margin bumps, partial extensions ('non-extended stub'), why lenders agree. Look up any 2023–24 A&E (Carnival; AMC's history).",
+       build:"—",
+       mastery:"Why would a lender extend rather than force the issue at maturity?"},
+      {code:"3.4", title:"Open-Market Debt Repurchases",
+       read:"Concepts: buying back below par, CODI tax issues, RP covenant constraints, sub-par discount capture.",
+       build:"—",
+       mastery:"Bonds trade at 60. Why might the company NOT buy them back even with cash on hand?"},
+      {code:"3.5", title:"Exchange Offers",
+       read:"Concepts: par-for-par vs. discounted, coercive exchanges, holdout problem, exit consents, minimum participation, distressed exchange = default per rating agencies. Examples: Revlon 2016/2020, Rite Aid.",
+       build:"Notes table: exchange types × who bears the loss.",
+       mastery:"How does a coercive exchange solve (and exploit) the holdout problem?"},
+      {code:"3.6", title:"Drop-Down Transactions (the Trapdoor)",
+       read:"Case to know cold: J.Crew 2017 — IP to an unrestricted sub via investment baskets, new debt issued against it. Also PetSmart/Chewy, Travelport. Concepts: unrestricted-sub designation, basket stacking, 'J.Crew blockers'.",
+       build:"Step-by-step diagram of the J.Crew transfer.",
+       mastery:"Walk through J.Crew: which baskets, what collateral leaked, what existing lenders lost."},
+      {code:"3.7", title:"Uptier Exchanges",
+       read:"Case to know cold: Serta Simmons 2020 + the 5th Circuit reversal. Also Boardriders, TriMark, Mitel, Incora/Wesco — know the litigation outcomes diverged. Concepts: required-lender amendments, super-priority new money, priming the minority, co-op agreements.",
+       build:"One-page Serta timeline: transaction → litigation → appeal.",
+       mastery:"What is 'lender-on-lender violence'? Which provisions (sacred rights, pro rata sharing) were at issue, and how have new docs responded?"},
+      {code:"3.8", title:"Double-Dip Financing",
+       read:"Cases: At Home 2023, Wheel Pros, Sabre. Mechanics: new money to a new sub, which on-lends to the parent (claim #1) AND takes a parent guarantee (claim #2) — two claims, one loan. Concepts: intercompany loans as collateral, pari-plus.",
+       build:"Diagram the two claims against the same estate.",
+       mastery:"Explain mechanically how one dollar of new money gets two claims."},
+      {code:"3.9", title:"LME Trends & Strategic Considerations",
+       read:"Recent S&P / Moody's LME default studies (free); 2025–26 law-firm retrospectives (ConvergeOne, TPI Composites, Wesco reversal). Concepts: co-op agreements, LME recidivism, doc blockers, reputation dynamics.",
+       build:"Two-page memo: 'The LME playbook and how credit docs evolved in response, 2017–2026.'",
+       mastery:"Why do most LME'd companies still file within ~2 years?"}
+    ]
+  },
+  {
+    id:"m4", seniority:"Sub Notes", title:"Module 4 — Case Studies",
+    intro:"For each: pull the first-day declaration (Kroll/Epiq dockets), the 8-K or cleansing materials, and write a 1-page memo — situation → cap structure pre/post → mechanics → who won/lost → lesson. Build a recovery waterfall for at least 3.",
+    lessons:[
+      {code:"4.1", title:"J.Crew — drop-down → Ch. 11 (2020)",
+       read:"The original trapdoor, plus proof of LME recidivism.",
+       build:"1-page case memo.", mastery:"Could the lenders have blocked it? Which clause would have?"},
+      {code:"4.2", title:"Serta Simmons — uptier → Ch. 11 (2023) → 5th Cir.",
+       read:"Doc interpretation, litigation risk, what 'open market purchase' means.",
+       build:"1-page case memo + recovery waterfall.", mastery:"State both sides' best legal argument."},
+      {code:"4.3", title:"Incora / Wesco — uptier + litigation",
+       read:"The messiest uptier; trial partially unwound the deal (and the district court later reversed parts — follow Ropes & Gray's coverage). Lesson: LME execution risk.",
+       build:"1-page case memo.", mastery:"What made Incora's 'serial uptier' structure more aggressive than Serta's?"},
+      {code:"4.4", title:"Envision Healthcare — drop-down + double-dip → Ch. 11 (2023)",
+       read:"AmSurg drop-down, payor disputes, KKR equity wiped.",
+       build:"1-page case memo + waterfall.", mastery:"How did the AmSurg structure split creditor recoveries?"},
+      {code:"4.5", title:"Hertz — solvent-debtor Ch. 11 (2020–21)",
+       read:"The rare case where equity recovered. Valuation fights, post-petition interest, competing plan sponsors.",
+       build:"1-page case memo + waterfall.", mastery:"Why did equity recover here when the absolute priority rule usually wipes it?"},
+      {code:"4.6", title:"Party City or Rite Aid — 'plain vanilla' Ch. 11",
+       read:"Pick one. Standard prearranged mechanics: RSA, DIP, backstopped rights offering, plan confirmation. Learn the vanilla before the exotic makes sense.",
+       build:"1-page case memo.", mastery:"Walk through an RSA-to-confirmation timeline."},
+      {code:"4.7", title:"Capstone — Your Own Mock RX Pitch",
+       read:"Screen a currently stressed public company in Capital IQ: leverage >6x, bonds <80, maturity inside 24 months.",
+       build:"(1) Cap table with market prices and YTW, (2) recovery waterfall at 3 EV scenarios, (3) 1-page strategic-alternatives memo applying the Module 3 ladder. This is a junior RX banker's pitch page — and a portfolio piece.",
+       mastery:"Present the pitch out loud in under 5 minutes."}
+    ]
+  },
+  {
+    id:"m5", seniority:"Equity", title:"Module 5 — Conclusion: Resume & Interviews",
+    intro:"Convert the work into recruiting ammunition.",
+    lessons:[
+      {code:"5.1", title:"Resume Bullets & Interview Conversion",
+       read:"IB interview guide RX questions; Pignataro Technical Interview Guide; restructuringinterviews.com blog.",
+       build:"3 resume bullets + 10 flashcards: fulcrum, DIP, 363 sale, cramdown, absolute priority, RSA, exit consent, unrestricted sub, sacred rights, CODI.",
+       mastery:"Final exam, all cold: recovery waterfall walkthrough · fulcrum · J.Crew · Serta · why double-dip vs. regular new money · 13-week CF line items · maintenance vs. incurrence · why LME'd companies still file."}
+    ]
+  }
+];
+
+// ---------------------------------------------------------------
+// RENDER
+// ---------------------------------------------------------------
+const totalLessons = CURRICULUM.reduce((s,m)=>s+m.lessons.length,0);
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+function isDone(code){ return lsGet("rx_"+code)==="1"; }
+
+function render(){
+  const wf=document.getElementById("waterfall");
+  const main=document.getElementById("modules");
+  wf.innerHTML=""; main.innerHTML="";
+
+  CURRICULUM.forEach((mod,i)=>{
+    const done=mod.lessons.filter(l=>isDone(l.code)).length;
+
+    // waterfall tranche
+    const t=document.createElement("div");
+    t.className="tranche t"+i;
+    t.innerHTML=`<span class="seniority">${mod.seniority}</span>
+      <span class="tname">${mod.title}</span>
+      <span class="trec mono">${done}/${mod.lessons.length}</span>`;
+    t.onclick=()=>document.getElementById(mod.id).scrollIntoView({behavior:"smooth"});
+    wf.appendChild(t);
+
+    // module section
+    const sec=document.createElement("section");
+    sec.className="module"; sec.id=mod.id;
+    sec.innerHTML=`<div class="modhead">
+        <div><div class="modlabel">${mod.seniority} tranche</div><h2>${mod.title}</h2></div>
+        <div class="modprog">${done} / ${mod.lessons.length} complete</div>
+      </div>
+      <p class="modintro">${mod.intro}</p>`;
+    mod.lessons.forEach(l=>{
+      const card=document.createElement("div");
+      card.className="lesson"+(isDone(l.code)?" done":"");
+      card.innerHTML=`
+        <div class="lhead">
+          <input type="checkbox" class="lcheck" ${isDone(l.code)?"checked":""} aria-label="Mark lesson ${l.code} complete">
+          <div class="ltitlewrap">
+            <div class="lcode">LESSON ${l.code}</div>
+            <div class="ltitle">${l.title}</div>
+          </div>
+          <div class="ltoggle">+</div>
+        </div>
+        <div class="lbody">
+          <h4>Read / Study</h4><p>${l.read}</p>
+          ${l.build && l.build!=="—" ? `<h4>Deliverable</h4><p>${l.build}</p>` : ""}
+          <h4>Mastery Check</h4><div class="mastery">${l.mastery}</div>
+        </div>`;
+      const head=card.querySelector(".lhead");
+      const chk=card.querySelector(".lcheck");
+      const tog=card.querySelector(".ltoggle");
+      head.addEventListener("click",e=>{
+        if(e.target===chk) return;
+        card.classList.toggle("open");
+        tog.textContent=card.classList.contains("open")?"−":"+";
+      });
+      chk.addEventListener("change",()=>{
+        if(chk.checked) lsSet("rx_"+l.code,"1"); else lsDel("rx_"+l.code);
+        render(); updateBar();
+      });
+      sec.appendChild(card);
+    });
+    main.appendChild(sec);
+  });
+}
+
+function updateBar(){
+  const done=CURRICULUM.flatMap(m=>m.lessons).filter(l=>isDone(l.code)).length;
+  const pct=done/totalLessons;
+  document.getElementById("barfill").style.width=(pct*100)+"%";
+  const cents=(pct*100).toFixed(1);
+  document.getElementById("pcttext").textContent=`${done} / ${totalLessons} · ${cents}¢ recovery`;
+  if(done===totalLessons){
+    document.getElementById("pcttext").textContent=`${done} / ${totalLessons} · PAR + ACCRUED ✓`;
+  }
+}
+
+document.getElementById("resetbtn").addEventListener("click",()=>{
+  if(confirm("Reset all progress? This clears every checkbox.")){
+    CURRICULUM.flatMap(m=>m.lessons).forEach(l=>lsDel("rx_"+l.code));
+    render(); updateBar();
+  }
+});
+
+render(); updateBar();
+</script>
+</body>
+</html>
